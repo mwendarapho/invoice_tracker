@@ -24,3 +24,5 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::resource('invoice',InvoiceController::class);
+Route::resource('staff',\App\Http\Controllers\StaffController::class);
+Route::resource('state',\App\Http\Controllers\StateController::class);

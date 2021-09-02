@@ -17,7 +17,6 @@ class CreateStaffTable extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('name')->unique();
-            $table->string('station');
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class StateSeeder extends Seeder
 {
@@ -13,6 +14,13 @@ class StateSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $states=['Printed','Store','Checking','Dispatch','Delivered'];
+        foreach ($states as $state){
+            DB::table('states')->insert([
+                'name' =>$state,
+                'created_at'=>now(),
+                'updated_at'=>now(),
+            ]);
+        }
     }
 }
