@@ -16,5 +16,8 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call(StateSeeder::class);
         $this->call(StaffSeeder::class);
+        \App\Models\User::factory(1)->create([
+            'email'=>'someone@example.com',
+        ]);
     }
 }

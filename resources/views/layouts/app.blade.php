@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title'){{' | '. config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
 
@@ -40,11 +40,14 @@
                         </li>
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.index') }}">{{ __('List Staff') }}</a>
+                                <a class="nav-link" href="{{ route('staff.index') }}">{{ __('Staff') }}</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('state.create') }}">{{ __('State List') }}</a>
+                                <a class="nav-link" href="{{ route('state.index') }}">{{ __('State') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('customer.index') }}">{{ __('Customers') }}</a>
                             </li>
                         @endauth
 

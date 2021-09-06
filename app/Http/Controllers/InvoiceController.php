@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use http\Message;
 use Illuminate\Http\Request;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +10,7 @@ use PHPUnit\Exception;
 
 class InvoiceController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -18,18 +18,17 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-
-
-        $query = DB::table('invoices as T1')
+        $invoices = DB::table('invoices as T1')
             ->join('states as T2', 'T1.states_id', '=', 'T2.id')
             ->join('customers as T3', 'T1.customers_code', '=', 'T3.code')
             ->join('staff as T4', 'T1.staff_code', '=', 'T4.code')
             ->latest('T1.created_at')
             ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer', 'T4.name as staff')
             ->get();
-        $invoices = $query;
 
-        // dd($invoices);
+
+        // {{ $invoice->invoice_no.'-'.$invoice->staff.'-'.$invoice->state }}
+
         return view('invoices.index', compact('invoices'));
     }
 
@@ -66,7 +65,7 @@ class InvoiceController extends Controller
             $data = $request->all();
             $userdata = (explode(" ", $data['user_id']));
 
-            //seperate customer code and invoice code
+            //seperate customers code and invoice code
             $invoicedata = (explode(" ", $data['invoice_no']));
 
 
@@ -95,27 +94,43 @@ class InvoiceController extends Controller
             $data1['customers_code'] = $data[3];
             $data1['invoice_no'] = $data[4];
 
-            //check if a record exists
-            $invoiceExists=Invoice::where('invoice_no',$data1['invoice_no'])->get();
+            $existingInvoices = Invoice::where('invoice_no', $data1['invoice_no'])
+                ->where('states_id', $data1['states_id'])
+                ->get();
 
-            //dd(count($invoiceExists));
-            if(count($invoiceExists)==0){
+
+            if (count($existingInvoices) > 0) {
+                $existingInvoices = array($existingInvoices[0]->invoice_no, $existingInvoices[0]->states_id);
+                $newInvoice = array($data1['invoice_no'], $data1['states_id']);
+
+                //check if a record[invoice and state] exists
+                if ($this->doesInvoiceExist($newInvoice, $existingInvoices)) {
+                    return redirect()->route('invoice.index');
+                }
+            } else {
                 Invoice::create($data1);
-            }else{
-                dd($data1);
-                $invoice= new Invoice();
-                $invoice->update($data1);
-
             }
+
 
         } catch (\Exception $e) {
             //return redirect()->route('invoice.index')->with(['message'=>'Error, Try again']);
+            dd($e->getMessage());
             return back()->withError($e->getMessage());
         }
 
 
         return redirect()->route('invoice.index')->with(['message' => 'Invoice saved']);
 
+    }
+
+    public function doesInvoiceExist($a, $b)
+    {
+        return (
+            is_array($a)
+            && is_array($b)
+            && count($a) == count($b)
+            && array_diff($a, $b) === array_diff($b, $a)
+        );
     }
 
     /**
@@ -162,4 +177,5 @@ class InvoiceController extends Controller
     {
         //
     }
+
 }

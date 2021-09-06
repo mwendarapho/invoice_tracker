@@ -15,10 +15,10 @@ class StaffSeeder extends Seeder
     public function run()
     {
 
-      /*  $staffs=[
-            ['code'=>'ST001','name'=>'Staff01'],
-            ['code'=>'ST002','name'=>'Staff02'],
-            ['code'=>'ST003','name'=>'Staff03']
+        $staffs=[
+            ['code'=>'200','name'=>'Tony Doer'],
+            ['code'=>'201','name'=>'Alice Makena'],
+            ['code'=>'202','name'=>'Peter Onyongo']
         ];
         for($i=0; $i< count($staffs); $i++) {
                 DB::table('staff')->insert([
@@ -27,6 +27,6 @@ class StaffSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-        }*/
+        }
     }
 }

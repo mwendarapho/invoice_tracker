@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\State;
 use App\Http\Requests\StateRequest;
+use Illuminate\Support\Facades\Log;
 
 class StateController extends Controller
 {

@@ -16,8 +16,9 @@ class Invoice extends Model
 
     ];
 
+
     public  function  customer(){
-        return $this->belongsTo(Customer::class,'customers_code');
+        return $this->belongsTo(Customer::class);
     }
 
     public function state(){
@@ -26,4 +27,5 @@ class Invoice extends Model
     public function staff(){
         $this->belongsTo(Staff::class,'staff_code');
     }
+
 }

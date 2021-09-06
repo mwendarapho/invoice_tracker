@@ -1,4 +1,4 @@
-@section('title', 'Invoices |')
+@section('title', 'Invoices')
 @extends('layouts.app')
 @section('styles')
     <style>
@@ -93,7 +93,7 @@
                 <td>{{ $invoice->customer }}</td>
                 <td>{{ \Carbon\Carbon::parse($invoice->created_at)->diffForHumans() }}</td>
                 <td>{{ $invoice->state }}</td>
-                <td>{{ $invoice->staff }}</td>
+                <td>{{ $invoice->staff }} </td>
                 {{--<td>{{ ($invoice->status ? 'paid' : 'unpaid') }}</td>--}}
             </tr>
         @endforeach

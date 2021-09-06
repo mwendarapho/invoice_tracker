@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +25,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $invoices=Invoice::all();
+       // $invoices=Customer::with('invoice')
+        //
+        //->with('state')
+
+       //->get();
+
+
+        return view('home',compact('invoices'));
     }
 }
