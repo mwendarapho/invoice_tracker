@@ -24,12 +24,13 @@ Auth::routes();
 Route::resource('invoice',InvoiceController::class);
 
 Route::group(['middleware'=>'auth'],function(){
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::resource('staff',\App\Http\Controllers\StaffController::class);
+    Route::resource('state',\App\Http\Controllers\StateController::class);
+    Route::resource('customer',\App\Http\Controllers\CustomerController::class);
+    Route::get('import',[\App\Http\Controllers\CustomerController::class,'getImportFile'])->name('import.create');
+    Route::post('import',[\App\Http\Controllers\CustomerController::class,'import'])->name('import.store');
 
-Route::resource('staff',\App\Http\Controllers\StaffController::class);
-Route::resource('state',\App\Http\Controllers\StateController::class);
-Route::resource('customer',\App\Http\Controllers\CustomerController::class);
-Route::get('import',[\App\Http\Controllers\CustomerController::class,'getImportFile'])->name('import.create');
-Route::post('import',[\App\Http\Controllers\CustomerController::class,'import'])->name('import.store');
-
+    Route::get('assign', [App\Http\Controllers\HomeController::class, 'assign'])->name('assign');
+    Route::post('allocate', [App\Http\Controllers\InvoiceController::class, 'allocate'])->name('allocate');
 });

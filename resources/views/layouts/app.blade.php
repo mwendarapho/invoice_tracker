@@ -40,6 +40,12 @@
                         </li>
                         @auth
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">{{ __('Dashboard') }}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('assign') }}">{{ __('Assign') }}</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('staff.index') }}">{{ __('Staff') }}</a>
                             </li>
 

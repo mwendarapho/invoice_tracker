@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CustomerImportRequest;
 use App\Models\Customer;
 use App\Http\Requests\CustomerRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Imports\CustomersImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -47,11 +46,11 @@ class CustomerController extends Controller
             //Log::error($e);
             Log::error(['code' => $e->getCode(), 'message' => $e->getMessage()]);
 
-            return redirect()->back()->withInput()->with(['message' => 'Error Saving the record']);
+            return redirect()->back()->withInput()->with(['status' => 'Error Saving the record']);
 
         }
 
-        return redirect()->route('customer.index')->with(['message' => 'Successfully added Record']);
+        return redirect()->route('customer.index')->with(['status' => 'Successfully added Record']);
     }
 
     /**
@@ -91,11 +90,11 @@ class CustomerController extends Controller
             //Log::error($e);
             Log::error(['code' => $e->getCode(), 'message' => $e->getMessage()]);
 
-            return redirect()->back()->withInput()->with(['message' => 'Error updating the record']);
+            return redirect()->back()->withInput()->with(['status' => 'Error updating the record']);
 
         }
 
-        return redirect()->route('customer.index')->with(['message' => 'Successfully updated Record']);
+        return redirect()->route('customer.index')->with(['status' => 'Successfully updated Record']);
     }
 
     /**
@@ -121,13 +120,18 @@ class CustomerController extends Controller
 
     public function import(CustomerImportRequest $request)
     {
+
+       
+
         try {
             Excel::import(new CustomersImport, $request->file('customersFile'));
         } catch (\Exception $e) {
             Log::error(['code' => $e->getCode(), 'message' => $e->getMessage()]);
-            return redirect()->back()->withInput()->with(['message' => 'Error importing file']);
+            //return redirect()->back()->withInput()->with(['message' => 'Error importing file']);
+            return redirect()->back()->with(['status' => 'Error importing file']);
         }
-        return redirect()->route('customer.index')->with(['message' => 'Imported successfully']);
+        
+        return redirect()->route('customer.index')->with(['status' => 'Imported successfully']);
 
     }
 

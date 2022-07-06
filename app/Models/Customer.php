@@ -13,8 +13,12 @@ class Customer extends Model
         'name',
         'code',
         'town',
+        'province',
     ];
-    public function invoice(){
+    public function invoices(){
         return $this->hasMany(Invoice::class);
+    }
+    public function states(){
+        return $this->hasManyThrough(State::class,Invoice::class);
     }
 }

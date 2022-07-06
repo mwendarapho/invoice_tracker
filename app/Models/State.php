@@ -10,7 +10,11 @@ class State extends Model
     use HasFactory;
     protected $fillable = [ 'name'];
 
-    public  function invoice(){
+    public  function invoices(){
         return$this->hasMany(Invoice::class);
     }
+    public function customer(){
+        return $this->belongsTo(Customer::class,Invoice::class);
+    }
+
 }

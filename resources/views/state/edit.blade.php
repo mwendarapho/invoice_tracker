@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title','Create state')
+@section('title','Edit state')
 @section('content')
     <div class="container-fluid">
         <div class="row">

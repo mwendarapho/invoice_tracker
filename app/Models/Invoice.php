@@ -10,22 +10,22 @@ class Invoice extends Model
     use HasFactory;
     protected $fillable = [
         'invoice_no',
-        'customers_code',
-        'states_id',
-        'staff_code',
+        'customer_id',
+        'state_id',
+        'staff_id',
 
     ];
 
 
-    public  function  customer(){
+    public  function  customers(){
         return $this->belongsTo(Customer::class);
     }
 
-    public function state(){
+    public function states(){
         return $this->hasMany(State::class);
     }
-    public function staff(){
-        $this->belongsTo(Staff::class,'staff_code');
+    public function staffs(){
+        $this->belongsToMany(Staff::class);
     }
 
 }

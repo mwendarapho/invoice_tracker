@@ -14,7 +14,7 @@ class StateSeeder extends Seeder
      */
     public function run()
     {
-        $states=['Printed','Store','Checking','Dispatch','Delivered'];
+        $states=['Printed','Dispatch','Out For Delivery'];
         foreach ($states as $state){
             DB::table('states')->insert([
                 'name' =>$state,

@@ -15,7 +15,7 @@
                 <form class="pt-4" action="{{ route('import.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group row">
-                        <label for="customersFile" class="col-sm-2 col-form-label">File [ csv ]</label>
+                        <label for="customersFile" class="col-sm-2 col-form-label">File [xls]</label>
                         <div class="col-sm-10">
                             <input type="file" name="customersFile" value="{{ old('customersFile') }}" autofocus
                                    class="form-file-input  @error('customersFile') is-invalid @enderror"

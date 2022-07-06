@@ -18,6 +18,7 @@ class CreateCustomersTable extends Migration
             $table->string('name')->unique();
             $table->string('code')->unique();
             $table->string('town')->nullable();
+            $table->string('province')->nullable();
             $table->timestamps();
         });
     }

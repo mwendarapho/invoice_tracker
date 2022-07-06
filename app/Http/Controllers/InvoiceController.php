@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use App\Models\Invoice;
+use App\Services\InvoiceService;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Exception;
 
@@ -19,10 +23,11 @@ class InvoiceController extends Controller
     public function index()
     {
         $invoices = DB::table('invoices as T1')
-            ->join('states as T2', 'T1.states_id', '=', 'T2.id')
-            ->join('customers as T3', 'T1.customers_code', '=', 'T3.code')
-            ->join('staff as T4', 'T1.staff_code', '=', 'T4.code')
+            ->join('states as T2', 'T1.state_id', '=', 'T2.id')
+            ->join('customers as T3', 'T1.customer_id', '=', 'T3.id')
+            ->join('staff as T4', 'T1.staff_id', '=', 'T4.id')
             ->latest('T1.created_at')
+            ->where('T1.state_id','!=','4')
             ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer', 'T4.name as staff')
             ->get();
 
@@ -61,54 +66,94 @@ class InvoiceController extends Controller
 
                     ]);*/
 
+        
 
             $data = $request->all();
-            $userdata = (explode(" ", $data['user_id']));
+            //dd($data);
+            $userdata = (explode(" ", $data['user']));
+
+            
 
             //seperate customers code and invoice code
-            $invoicedata = (explode(" ", $data['invoice_no']));
-
-
+            $invoicedata = (explode(" ", $data['invoice']));
+            
+            
             //check  data input order
             if (count($userdata) != 2 || count($invoicedata) != 3) {
-
-                return redirect()->route('invoice.index');
-
+                //dd('okay');
+                return redirect()->route('invoice.index')->with(['status'=>'Incorrect data, scan again!']);
             }
 
             $data = array_merge($userdata, $invoicedata);
+            
 
+           
 
-            $data1['states_id'] = (int)filter_var($data[0], FILTER_SANITIZE_NUMBER_INT);
-            $data1['states_id'] = (int)filter_var($data[2], FILTER_SANITIZE_NUMBER_INT);
 
             //validate scanner
             if ($data[0] != $data[2]) {
 
-                return redirect()->route('invoice.index');
+                return redirect()->route('invoice.index')->with(['status'=>'Incorrect data, scan again!']);;
 
             }
-
+            $data1['invoice_no'] = $data[4];
+            //$data1['state_id'] = (int)filter_var($data[0], FILTER_SANITIZE_NUMBER_INT);
+            $data1['state_id'] = (int)filter_var($data[2], FILTER_SANITIZE_NUMBER_INT);
 
             $data1['staff_code'] = $data[1];
             $data1['customers_code'] = $data[3];
-            $data1['invoice_no'] = $data[4];
+            
+            $customer=Customer::where('code','=', $data1['customers_code'])->pluck('id');
+            $staff=Staff::where('code','=', $data1['staff_code'])->pluck('id');
+
+            //dd('staff '.count($staff).'---- Customer'.$customer);
+
+            if(count($customer)==0 || count($staff)==0){
+                return redirect()->route('invoice.index')->with(['status'=>'Incorrect data, scan again!']);
+            }
+
+            $data1['customer_id']=$customer[0];
+            $data1['staff_id']=$staff[0];
 
             $existingInvoices = Invoice::where('invoice_no', $data1['invoice_no'])
-                ->where('states_id', $data1['states_id'])
+                //->where('state_id', $data1['state_id'])
                 ->get();
-
+            //dd($existingInvoices);
 
             if (count($existingInvoices) > 0) {
-                $existingInvoices = array($existingInvoices[0]->invoice_no, $existingInvoices[0]->states_id);
-                $newInvoice = array($data1['invoice_no'], $data1['states_id']);
+
+                $existingInvoices = array($existingInvoices[0]->invoice_no, $existingInvoices[0]->state_id);
+                $newInvoice = array($data1['invoice_no'], $data1['state_id']);
 
                 //check if a record[invoice and state] exists
                 if ($this->doesInvoiceExist($newInvoice, $existingInvoices)) {
-                    return redirect()->route('invoice.index');
+                    return redirect()->route('invoice.index')->with(['status' => 'Already saved']);
+                }else{
+                    unset($data1["staff_code"],$data1["customers_code"]);
+                    
+
+                   // dd($data1);
+                    //DB::table('invoices')->update($data1);
+                    DB::table('invoices')
+                    ->where('invoice_no',$data1['invoice_no'])
+                    ->update(
+                        [
+                            'state_id' => $data1['state_id'],
+                            'updated_at'=>Date::now(),
+                        
+                        ]
+                        
+                    );
+                    
+
                 }
             } else {
+                
+                //prune data
+                unset($data1["staff_code"],$data1["customers_code"]);
+                //dd($data1);
                 Invoice::create($data1);
+                
             }
 
 
@@ -119,7 +164,7 @@ class InvoiceController extends Controller
         }
 
 
-        return redirect()->route('invoice.index')->with(['message' => 'Invoice saved']);
+        return redirect()->route('invoice.index')->with(['status' => 'Invoice saved']);
 
     }
 
@@ -162,9 +207,9 @@ class InvoiceController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Invoice $invoice)
     {
-        //
+        $invoice->update($request->all());
     }
 
     /**
@@ -176,6 +221,16 @@ class InvoiceController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function allocate(Request $request){
+        $validated = $request->validate([
+
+            'invoices' => 'required',
+            'staff_id'=> 'required',
+
+        ]);
+        dd($validated);
     }
 
 }

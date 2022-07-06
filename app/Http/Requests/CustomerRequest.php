@@ -27,6 +27,7 @@ class CustomerRequest extends FormRequest
             'code'=>'bail | required | unique:customers',
             'name'=>'required | unique:customers',
             'town'=>'sometimes',
+            'province'=>'sometimes',
         ];
     }
 }

@@ -22,6 +22,7 @@
                     <th>Code</th>
                     <th>Name</th>
                     <th>Town</th>
+                    <th>Province</th>
                     <th>Updated</th>
                     <th colspan="3" scope="col" class="d-print-none"><i class="fas fa-bars"></i></th>
                 </tr>
@@ -36,6 +37,7 @@
                     <td>{{$customer->code}}</td>
                     <td>{{$customer->name}}</td>
                     <td>{{$customer->town}}</td>
+                    <td>{{ $customer->province}}</td>
                     <td>{{ \Carbon\Carbon::parse($customer->updated_at)->diffForHumans()}}</td>
                     <td class="d-print-none">
                         <a class="px-2 btn-sm btn-outline-primary" href="{{'customer/'.$customer->id}}/edit"><i class="fas fa-edit"></i></a>
