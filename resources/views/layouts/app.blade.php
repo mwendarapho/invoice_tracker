@@ -43,7 +43,7 @@
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Dashboard') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('assign') }}">{{ __('Assign') }}</a>
+                                <a class="nav-link" href="{{ route('region') }}">{{ __('Routes') }}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('staff.index') }}">{{ __('Staff') }}</a>

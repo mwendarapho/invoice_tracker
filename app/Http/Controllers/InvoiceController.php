@@ -7,6 +7,7 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use App\Models\Invoice;
 use App\Services\InvoiceService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Exception;
@@ -26,9 +27,9 @@ class InvoiceController extends Controller
             ->join('states as T2', 'T1.state_id', '=', 'T2.id')
             ->join('customers as T3', 'T1.customer_id', '=', 'T3.id')
             ->join('staff as T4', 'T1.staff_id', '=', 'T4.id')
-            ->latest('T1.created_at')
+            ->latest('T1.updated_at')
             ->where('T1.state_id','!=','4')
-            ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer', 'T4.name as staff')
+            ->select('T1.id', 'T1.invoice_no', 'T1.updated_at', 'T2.name as state', 'T3.name as customer', 'T4.name as staff')
             ->get();
 
 
@@ -139,7 +140,7 @@ class InvoiceController extends Controller
                     ->update(
                         [
                             'state_id' => $data1['state_id'],
-                            'updated_at'=>Date::now(),
+                            'updated_at'=>Carbon::now(),
                         
                         ]
                         
@@ -230,7 +231,25 @@ class InvoiceController extends Controller
             'staff_id'=> 'required',
 
         ]);
-        dd($validated);
+       // dd($validated['invoices']);
+
+       foreach ($validated['invoices'] as $invoice){
+
+        Invoice::where('id',$invoice)
+        ->update([
+            'staff_id'=>$validated['staff_id'],
+            'state_id'=>4, //out for delivery,
+            'updated_at'=> Carbon::now(),
+        ]);
+            
+
+       }
+
+       //dd($validated['invoices']);
+       return redirect()->route('region');
+
+
+        
     }
 
 }

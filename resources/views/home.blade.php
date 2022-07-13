@@ -21,6 +21,7 @@
                                     <th>Customer</th>
                                     <th>Total</th>
                                     <th>Printed</th>
+                                    <th>Checking</th>
                                     <th>Dispatch</th>
                                     <th>Out For Delivery</th>
                                 </tr>
@@ -41,7 +42,8 @@
                                         <td>{{ $invoice->total}}</td>
                                         <td>{{ $invoice->printed}}</td>
                                         <td>{{ $invoice->dispatch}}</td>
-                                        <td>{{ $invoice->delivery}}</td>                                        
+                                        <td>{{ $invoice->delivery}}</td>
+                                        <td>{{ $invoice->enroute}}</td>                                            
 
 
                                     </tr>

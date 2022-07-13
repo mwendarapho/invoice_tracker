@@ -91,7 +91,7 @@
             <tr class="p-0">
                 <td><a href="invoice/{{ $invoice->invoice_no }}"><span data-feather="arrow-right-circle" class="small text-success"></span></a>{{ $invoice->invoice_no }} </td>
                 <td>{{ $invoice->customer }}</td>
-                <td>{{ \Carbon\Carbon::parse($invoice->created_at)->diffForHumans() }}</td>
+                <td>{{ \Carbon\Carbon::parse($invoice->updated_at)->diffForHumans() }}</td>
                 <td>{{ $invoice->state }}</td>
                 <td>{{ $invoice->staff }} </td>
                 {{--<td>{{ ($invoice->status ? 'paid' : 'unpaid') }}</td>--}}
