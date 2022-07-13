@@ -80,7 +80,7 @@ class HomeController extends Controller
         join customers as T2
         on T1.customer_id=T2.id
         
-        where province="Nairobi"
+        where province="Nairobi" AND T1.state_id=3
         ) as T3
         
         group by town
@@ -104,7 +104,7 @@ class HomeController extends Controller
         join customers as T2
         on T1.customer_id=T2.id
         
-        where province!="Nairobi"
+        where province!="Nairobi" AND T1.state_id=3
           ) as T3
           
           #group by town';
@@ -115,6 +115,23 @@ class HomeController extends Controller
         return view('invoices.region',compact('invoices'));
     }
     public function regionFilter($town){
+        if($town=="upcountry"){
+            
+            $invoices = DB::table('invoices as T1')
+            ->join('states as T2', 'T1.state_id', '=', 'T2.id')
+            ->join('customers as T3', 'T1.customer_id', '=', 'T3.id')
+            ->join('staff as T4', 'T1.staff_id', '=', 'T4.id')
+            ->orderBy('T3.name')
+            ->orderBy('T1.created_at')
+            //->latest('T1.created_at')
+            ->where('state_id','=','3')
+            ->where('T3.province','!=',"Nairobi")
+            ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer','T3.town as town','T3.province as province', 'T4.name as staff')
+            ->get();
+            
+            $riders=Staff::all();
+            return view('invoices.assignment',compact('invoices','riders'));
+        }
 
         $invoices = DB::table('invoices as T1')
         ->join('states as T2', 'T1.state_id', '=', 'T2.id')
@@ -123,9 +140,9 @@ class HomeController extends Controller
         ->orderBy('T3.name')
         ->orderBy('T1.created_at')
         //->latest('T1.created_at')
-        //->where('state_id','=','3')
+        ->where('state_id','=','3')
         ->where('T3.town','=',$town)
-        ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer', 'T4.name as staff')
+        ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer','T3.town as town', 'T3.province as province', 'T4.name as staff')
         ->get();
         
         $riders=Staff::all();

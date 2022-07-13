@@ -75,6 +75,8 @@
             <th scope="col">Invoice No</th>
             <th scope="col">Customer</th>
             <th scope="col"></th>
+            <th scope="col">Town</th>
+            <th scope="col">Province</th>
             <th scope="col">Invoice Date</th>
             <th scope="col">Status</th>
             <th scope="col">Staff</th>
@@ -87,6 +89,8 @@
                 <td><a href="invoice/{{ $invoice->invoice_no }}"><i class="fas fa-arrow-circle-right pr-1"></i></a>{{ $invoice->invoice_no }} </td>
                 <td>{{ $invoice->customer }}</td>
                 <td><input name="invoices[]" value="{{ $invoice->id}}" type="checkbox"</td>
+                <td>{{ $invoice->town }}</td>
+                <td>{{ $invoice->province }}</td>
                 <td>{{ \Carbon\Carbon::parse($invoice->created_at)->diffForHumans() }}</td>
                 <td>{{ $invoice->state }}</td>
                 <td>{{ $invoice->staff }} </td>

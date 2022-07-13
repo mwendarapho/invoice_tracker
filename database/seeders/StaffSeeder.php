@@ -18,7 +18,8 @@ class StaffSeeder extends Seeder
         $staffs=[
             ['code'=>'200','name'=>'Tony Doer'],
             ['code'=>'201','name'=>'Alice Makena'],
-            ['code'=>'202','name'=>'Peter Onyongo']
+            ['code'=>'202','name'=>'Peter Onyongo'],
+            ['code'=>'999','name'=>'Upcountry']
         ];
         for($i=0; $i< count($staffs); $i++) {
                 DB::table('staff')->insert([
