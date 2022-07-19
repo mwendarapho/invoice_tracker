@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Staff;
 use App\Models\State;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -105,48 +106,16 @@ class HomeController extends Controller
         on T1.customer_id=T2.id
         
         where province!="Nairobi" AND T1.state_id=3
-          ) as T3
-          
-          #group by town';
-        
-        
+          ) as T3';
         $invoices=DB::select($query);
 
         return view('invoices.region',compact('invoices'));
     }
-    public function regionFilter($town){
-        if($town=="upcountry"){
+    public function regionFilter($town){       
             
-            $invoices = DB::table('invoices as T1')
-            ->join('states as T2', 'T1.state_id', '=', 'T2.id')
-            ->join('customers as T3', 'T1.customer_id', '=', 'T3.id')
-            ->join('staff as T4', 'T1.staff_id', '=', 'T4.id')
-            ->orderBy('T3.name')
-            ->orderBy('T1.created_at')
-            //->latest('T1.created_at')
-            ->where('state_id','=','3')
-            ->where('T3.province','!=',"Nairobi")
-            ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer','T3.town as town','T3.province as province', 'T4.name as staff')
-            ->get();
-            
+            $invoices=(new InvoiceService)->getRegion($town);
             $riders=Staff::all();
             return view('invoices.assignment',compact('invoices','riders'));
-        }
-
-        $invoices = DB::table('invoices as T1')
-        ->join('states as T2', 'T1.state_id', '=', 'T2.id')
-        ->join('customers as T3', 'T1.customer_id', '=', 'T3.id')
-        ->join('staff as T4', 'T1.staff_id', '=', 'T4.id')
-        ->orderBy('T3.name')
-        ->orderBy('T1.created_at')
-        //->latest('T1.created_at')
-        ->where('state_id','=','3')
-        ->where('T3.town','=',$town)
-        ->select('T1.id', 'T1.invoice_no', 'T1.created_at', 'T2.name as state', 'T3.name as customer','T3.town as town', 'T3.province as province', 'T4.name as staff')
-        ->get();
-        
-        $riders=Staff::all();
-        return view('invoices.assignment',compact('invoices','riders'));
 
     }
 }

@@ -22,10 +22,10 @@ class Invoice extends Model
     }
 
     public function states(){
-        return $this->hasMany(State::class);
+        return $this->belongsTo(State::class);
     }
     public function staffs(){
-        $this->belongsToMany(Staff::class);
+        $this->belongsTo(Staff::class);
     }
 
 }

@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\Invoice;
 use App\Services\InvoiceService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Date;
+
+
+
+
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Exception;
 
@@ -21,16 +24,13 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(InvoiceService $service)
     {
-        $invoices = DB::table('invoices as T1')
-            ->join('states as T2', 'T1.state_id', '=', 'T2.id')
-            ->join('customers as T3', 'T1.customer_id', '=', 'T3.id')
-            ->join('staff as T4', 'T1.staff_id', '=', 'T4.id')
-            ->latest('T1.updated_at')
-            ->where('T1.state_id','!=','4')
-            ->select('T1.id', 'T1.invoice_no', 'T1.updated_at', 'T2.name as state', 'T3.name as customer', 'T4.name as staff')
-            ->get();
+
+        $invoices= $service->getDispatchInvoice();
+
+        //dd($invoices);
+        
 
 
         // {{ $invoice->invoice_no.'-'.$invoice->staff.'-'.$invoice->state }}
@@ -69,36 +69,19 @@ class InvoiceController extends Controller
 
         
 
-            $data = $request->all();
-            //dd($data);
-            $userdata = (explode(" ", $data['user']));
+            $data = (new InvoiceService)->checkData($request->all());
+            
+             //check  data input order
+             //validate scanner
+             
 
-            
-
-            //seperate customers code and invoice code
-            $invoicedata = (explode(" ", $data['invoice']));
-            
-            
-            //check  data input order
-            if (count($userdata) != 2 || count($invoicedata) != 3) {
-                //dd('okay');
+             
+             if ((count($data) != 5) || ($data[0] != $data[2]) || ($data[0] != $data[2])) {
                 return redirect()->route('invoice.index')->with(['status'=>'Incorrect data, scan again!']);
+                
             }
 
-            $data = array_merge($userdata, $invoicedata);
-            
-
-           
-
-
-            //validate scanner
-            if ($data[0] != $data[2]) {
-
-                return redirect()->route('invoice.index')->with(['status'=>'Incorrect data, scan again!']);;
-
-            }
             $data1['invoice_no'] = $data[4];
-            //$data1['state_id'] = (int)filter_var($data[0], FILTER_SANITIZE_NUMBER_INT);
             $data1['state_id'] = (int)filter_var($data[2], FILTER_SANITIZE_NUMBER_INT);
 
             $data1['staff_code'] = $data[1];
@@ -107,7 +90,7 @@ class InvoiceController extends Controller
             $customer=Customer::where('code','=', $data1['customers_code'])->pluck('id');
             $staff=Staff::where('code','=', $data1['staff_code'])->pluck('id');
 
-            //dd('staff '.count($staff).'---- Customer'.$customer);
+          
 
             if(count($customer)==0 || count($staff)==0){
                 return redirect()->route('invoice.index')->with(['status'=>'Incorrect data, scan again!']);
@@ -116,10 +99,11 @@ class InvoiceController extends Controller
             $data1['customer_id']=$customer[0];
             $data1['staff_id']=$staff[0];
 
-            $existingInvoices = Invoice::where('invoice_no', $data1['invoice_no'])
+            //$existingInvoices = Invoice::where('invoice_no', $data1['invoice_no'])
                 //->where('state_id', $data1['state_id'])
-                ->get();
+             //   ->get();
             //dd($existingInvoices);
+            $existingInvoices=(new InvoiceService)->existingInvoices($data1['invoice_no']);
 
             if (count($existingInvoices) > 0) {
 
@@ -127,7 +111,7 @@ class InvoiceController extends Controller
                 $newInvoice = array($data1['invoice_no'], $data1['state_id']);
 
                 //check if a record[invoice and state] exists
-                if ($this->doesInvoiceExist($newInvoice, $existingInvoices)) {
+                if ((new InvoiceService)->doesInvoiceExist($newInvoice, $existingInvoices)) {
                     return redirect()->route('invoice.index')->with(['status' => 'Already saved']);
                 }else{
                     unset($data1["staff_code"],$data1["customers_code"]);
@@ -169,15 +153,7 @@ class InvoiceController extends Controller
 
     }
 
-    public function doesInvoiceExist($a, $b)
-    {
-        return (
-            is_array($a)
-            && is_array($b)
-            && count($a) == count($b)
-            && array_diff($a, $b) === array_diff($b, $a)
-        );
-    }
+   
 
     /**
      * Display the specified resource.
@@ -231,7 +207,7 @@ class InvoiceController extends Controller
             'staff_id'=> 'required',
 
         ]);
-       // dd($validated['invoices']);
+       
 
        foreach ($validated['invoices'] as $invoice){
 
@@ -245,7 +221,6 @@ class InvoiceController extends Controller
 
        }
 
-       //dd($validated['invoices']);
        return redirect()->route('region');
 
 

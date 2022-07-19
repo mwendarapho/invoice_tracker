@@ -39,4 +39,15 @@ Route::group(['middleware'=>'auth'],function(){
     //Route::get('assign', [App\Http\Controllers\HomeController::class, 'assign'])->name('assign');
 
 
+Route::get('delivery', function () {
+    return view('invoices.delivery');
+    //return redirect()->route('invoice.index');
+})->name('delivery');
+
+Route::get('delivery{delivery}', function () {
+    return view('invoices.delivery');
+    //return redirect()->route('invoice.index');
+})->name('invoice.delivery');
+
+
 });

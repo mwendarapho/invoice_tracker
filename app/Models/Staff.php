@@ -13,7 +13,15 @@ class Staff extends Model
         'code','name','station',
     ];
 
-    public function invoice(){
+    public function invoices(){
         return $this->hasMany(Invoice::class);
     }
+    
+    public function customers()
+    {
+        return $this->hasManyThrough(Customer::class, Invoice::class);
+    }
+    
+    
+    
 }
